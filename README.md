@@ -13,3 +13,10 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
 - Developed two CUDA kernels:  
   - **Multi-stream initialization acceleration** for efficient data loading.  
   - **Strided approach for vector addition** to optimize memory access.  
+
+### **Day 3**
+- Optimized **Matrix Multiplication Acceleration** for a NxN matrix of size N = 1000.
+- Developed two CUDA kernels:
+  - **Multi-stream initialization acceleration** with 2D blocks and with a strided approach.
+  - **2D strided memory access** for efficient multiplication.
+- Explored **dim3()** for multi-dimensional thread and block configuration.
