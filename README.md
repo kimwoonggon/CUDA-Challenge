@@ -20,3 +20,11 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
   - **Multi-stream initialization acceleration** with 2D blocks and with a strided approach.
   - **2D strided memory access** for efficient multiplication.
 - Explored **dim3()** for multi-dimensional thread and block configuration.
+
+### **Day 4**
+- Developed two CUDA kernels:
+  - **RGB to Grayscale conversion**.
+  - **Blurring of the Grayscale image**.
+- Learnt Python bindings:
+  - Converted CUDA kernels into a shared object (.so) file.
+  - Integrated and executed the CUDA kernels from Python.
