@@ -29,7 +29,7 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
   - Converted CUDA kernels into a shared object (.so) file.
   - Integrated and executed the CUDA kernels from Python.
 
-### **Day 4**
+### **Day 5**
 - Developed a kernel for summation of array acceleration using a partial sum approach.
 - CPU Execution Time: 3.859000 ms
 - GPU Execution Time: 0.831488 ms
