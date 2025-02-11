@@ -41,3 +41,9 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
   - Matrix Multiplication CPU time: 51694.223000 ms
   - Matrix Multiplication GPU time: 675.109863 ms
   - Tiled Matrix Multiplication GPU time: 277.286774 ms
+
+### **Day 7**
+- Recalled learnings for Day4.
+- Developed a kernel for Gaussian Blur of RGB images.
+- Learnt pycuda and its implementation.
+- Compared the custom kernel's results with OpenCV's built-in functions.
