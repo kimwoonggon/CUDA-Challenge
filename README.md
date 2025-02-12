@@ -47,3 +47,10 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
 - Developed a kernel for Gaussian Blur of RGB images.
 - Learnt pycuda and its implementation.
 - Compared the custom kernel's results with OpenCV's built-in functions.
+
+### **Day 8**
+- Developed a 2D convolutional filter kernel.
+- Initialized filter weights using He Normal Initialization.
+- Performance:-
+  - GPU Convolution Execution Time: 0.01 ms
+  - CPU Convolution Execution Time: 0.68 ms
