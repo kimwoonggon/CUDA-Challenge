@@ -59,3 +59,10 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
 - Recalled Learnings from Day 4 to convert an image to grayscale.
 - Applied image blurring to smooth out noise, preventing the edge detection filter from capturing unwanted noise. This step also leveraged knowledge from Day 4.. Again, recalled Day 4 image blurring knowledge.
 - Developed a 2D convolutional kernel with a Laplacian edge detection filter on the blurred image.
+
+### **Day 10**
+- Implemented a tiled convolutional kernels which handles cases where the input and output sizes of matrices does not match.
+- Understood the concept of halo cells and shared memory.
+- Results:
+  - GPU Tiled Convolution Execution Time: 0.07 ms
+  - CPU Tiled Convolution Execution Time: 0.66 ms
