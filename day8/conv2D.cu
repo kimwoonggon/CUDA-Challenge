@@ -115,9 +115,10 @@ int main() {
     cudaMalloc(&cpu_res_gpu, N*N*sizeof(float));
     cudaMalloc(&d_errors, sizeof(int));
 
-    dim3 init_threads(16, 16);
-    dim3 init_blocks((N+15)/16, (N+15)/16);
-    init<<<init_blocks, init_threads>>>(in_gpu, N, time(NULL));
+    dim3 threads(32, 32);
+    dim3 blocks((2 * radius + 1 + threads.x - 1) / threads.x, (2 * radius + 1 + threads.y - 1) / threads.y);
+    init<<<blocks, threads>>>(in_gpu, N, time(NULL));
+    cudaDeviceSynchronize();
     
     size_t f_size = (2*radius+1)*(2*radius+1);
     heNormal<<<(f_size+255)/256, 256>>>(filter, radius, time(NULL));
@@ -127,11 +128,9 @@ int main() {
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     
-    dim3 conv_threads(16, 16);
-    dim3 conv_blocks((N+15)/16, (N+15)/16);
-    
     cudaEventRecord(start);
-    conv2D<<<conv_blocks, conv_threads>>>(in_gpu, out_gpu, filter, radius, N);
+    conv2D<<<blocks, threads>>>(in_gpu, out_gpu, filter, radius, N);
+    cudaDeviceSynchronize();
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&gpu_time, start, stop);
@@ -150,7 +149,8 @@ int main() {
     cudaMemcpy(cpu_res_gpu, output_cpu, N*N*sizeof(float), cudaMemcpyHostToDevice);
 
     cudaMemset(d_errors, 0, sizeof(int));
-    verify<<<conv_blocks, conv_threads>>>(out_gpu, cpu_res_gpu, d_errors, N);
+    verify<<<blocks, threads>>>(out_gpu, cpu_res_gpu, d_errors, N);
+    cudaDeviceSynchronize();
     
     int errors;
     cudaMemcpy(&errors, d_errors, sizeof(int), cudaMemcpyDeviceToHost);
