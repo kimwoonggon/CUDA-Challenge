@@ -66,3 +66,10 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
 - Results:
   - GPU Tiled Convolution Execution Time: 0.07 ms
   - CPU Tiled Convolution Execution Time: 0.66 ms
+
+ ### **Day 11**
+ - Learned about 3D arrays and how they are stored in the memory.
+ - Implemented a simple stencil sweep kernel.
+ - Results:
+   - GPU time: 3.867808 ms
+   - CPU time: 23.410000 ms
