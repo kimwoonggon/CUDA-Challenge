@@ -517,6 +517,9 @@ extern "C" __global__ void edgeDetectionLaplacianConv2D(float *input, float *out
 }
 ```
 
+**Results:**
+![Output Plot](day9/output_plot.png)
+
 ### **Day 10**
 - Implemented a tiled convolutional kernels which handles cases where the input and output sizes of matrices does not match.
 - Understood the concept of halo cells and shared memory.
