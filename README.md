@@ -112,9 +112,7 @@ Both tasks utilize 2D grid and block configurations for parallel processing and 
 **Objective:**  
 - Convert an RGB image to grayscale.
 - Learn to manage multiple color channels and apply the weighted formula:  
-  \[
-  \text{Gray} = 0.21 \times R + 0.71 \times G + 0.07 \times B
-  \]
+  'Gray = 0.21 x R + 0.71 x G + 0.07 x B'
 - Utilize CUDA kernels with 2D grid and block configurations to process each pixel in parallel.
 
 **Key Learnings:**  
@@ -156,7 +154,7 @@ __global__ void RGB2Grayscale(unsigned char *rgb_img_in, unsigned char *gray_img
 
 **Objective:**
 - Apply a box blur filter to a grayscale image.
-- Process each pixel by averaging values in a neighborhood defined by `BLUR_SIZE` (resulting in a window of size \((2 \times \text{BLUR\_SIZE} + 1) \times (2 \times \text{BLUR\_SIZE} + 1)\)).
+- Process each pixel by averaging values in a neighborhood defined by `BLUR_SIZE` (resulting in a window of size '2 x BLUR_SIZE + 1').
 - Use strided loops within the kernel to cover the entire image and handle boundary conditions.
 
 **Key Learnings:**
