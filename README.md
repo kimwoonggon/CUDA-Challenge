@@ -19,7 +19,7 @@ cudaGetDevice(&deviceId);
 cudaGetDeviceProperties(&props, deviceId);
 printf("GPU Name: %s\n", props.name);
 printf("Compute Capability: %d.%d\n", props.major, props.minor);
-
+'''c
 
 ### **Day 2**  
 - Optimized **Vector Addition Acceleration** for a **10⁸**-sized vector on RTX A4000.  
