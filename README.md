@@ -100,7 +100,6 @@ __global__ void addVector(int *a, int *b, int *c)
 
 ### Overview
 
-In Day 4, we tackle two image processing tasks using CUDA:
 1. **RGB to Grayscale Conversion:** Convert a color image to grayscale by applying a weighted sum on the RGB channels.
 2. **Image Blurring:** Apply a box blur filter to a grayscale image by averaging neighboring pixel values.
 
@@ -203,10 +202,65 @@ __global__ void imageBlur(unsigned char *img_in, unsigned char *img_out, int img
 }
 ```
 
-### **Day 5**
-- Developed a kernel for summation of array acceleration using a partial sum approach.
-- CPU Execution Time: 3.859000 ms
-- GPU Execution Time: 0.831488 ms
+## Day 5: GPU Accelerated Array Summation with CUDA Reduction
+
+**Objective:**
+- **Random Array Initialization:** Using CUDA's `curand` library to populate an array with random integers.
+- **Parallel Reduction:** Summing array elements efficiently in parallel using shared memory.
+- **Performance Benchmarking:** Comparing GPU performance against a CPU summation.
+
+Managed memory is used to simplify data handling between the host and device, and CUDA events are utilized for precise timing of the GPU kernel execution.
+
+**Key Learnings:**
+- **CUDA Random Number Generation:** Learnt how to initialize random states with `curand_init` and generate random numbers using `curand`.
+
+- **Parallel Reduction:** Implemented a reduction algorithm using shared memory and synchronization to sum large arrays efficiently.
+
+- **Performance Benchmarking:** Measured and compared GPU and CPU execution times to highlight the benefits of parallel processing.
+
+- **Memory Management:** Utilized CUDA Unified Memory for easier host-device data management.
+
+**Partial Sum Kernel:**
+```c
+__global__ void calcSum(int *arr_in, int *arr_out, int N)
+{   
+    __shared__ int mem[2048];
+
+    int next_i = blockDim.x * blockIdx.x * 2 + threadIdx.x;
+
+    if (next_i < N) 
+    {
+        if (next_i + blockDim.x < N) 
+        {
+            mem[threadIdx.x] = arr_in[next_i] + arr_in[next_i + blockDim.x];
+        } 
+        else 
+        {
+            mem[threadIdx.x] = arr_in[next_i];
+        }
+    } 
+    else 
+    {
+        mem[threadIdx.x] = 0;
+    }
+    __syncthreads();
+
+    for(int stride = blockDim.x / 2; stride > 0; stride /= 2)
+    {
+        if(threadIdx.x < stride)
+        {
+            mem[threadIdx.x] += mem[threadIdx.x + stride];
+        }
+        __syncthreads();
+    }
+
+    if (threadIdx.x == 0)
+    {
+        arr_out[blockIdx.x] = mem[0];
+    }
+}
+```
+
 
 ### **Day 6**
 - Developed a kernel for tile based Matrix Multiplication.
