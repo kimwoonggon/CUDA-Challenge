@@ -2,9 +2,9 @@
 
 Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing this challenge!
 
-## Progress Log
+# Progress Log
 
-### Day 1: Introduction to CUDA & Basic GPU Queries
+## Day 1: Introduction to CUDA & Basic GPU Queries
 
 **Key Learnings:**
 - **CUDA Initialization & Device Query:**  
@@ -21,7 +21,7 @@ printf("GPU Name: %s\n", props.name);
 printf("Compute Capability: %d.%d\n", props.major, props.minor);
 ```
 
-### Day 2: Vector Addition Acceleration
+## Day 2: Vector Addition Acceleration
 
 **Objective:**  
 - Accelerate vector addition on a very large vector (size = \(10^8\)) using CUDA.
@@ -53,7 +53,7 @@ __global__ void addVector(int *a, int *b, int *c)
 ```
 
 
-### Day 3: Matrix Multiplication Acceleration 
+## Day 3: Matrix Multiplication Acceleration 
 
  **Objective:**  
  - Accelerate matrix multiplication for a square matrix of size \(N \times N\) (where \(N = 1000\)) using CUDA. 
@@ -94,11 +94,11 @@ __global__ void addVector(int *a, int *b, int *c)
  }
 ```
 
-# Day 4: CUDA Image Processing - RGB to Grayscale & Image Blurring
+## Day 4: CUDA Image Processing - RGB to Grayscale & Image Blurring
 
 ---
 
-## Overview
+### Overview
 
 In Day 4, we tackle two image processing tasks using CUDA:
 1. **RGB to Grayscale Conversion:** Convert a color image to grayscale by applying a weighted sum on the RGB channels.
@@ -108,7 +108,7 @@ Both tasks utilize 2D grid and block configurations for parallel processing and 
 
 ---
 
-## Part 1: RGB to Grayscale Conversion
+### Part 1: RGB to Grayscale Conversion
 
 **Objective:**  
 - Convert an RGB image to grayscale.
@@ -153,7 +153,7 @@ __global__ void RGB2Grayscale(unsigned char *rgb_img_in, unsigned char *gray_img
     }
 }
 ```
-#### Part 2: Image Blurring
+### Part 2: Image Blurring
 
 **Objective:**
 - Apply a box blur filter to a grayscale image.
