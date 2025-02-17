@@ -4,7 +4,7 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
 
 # Progress Log
 
-## Day 1: Introduction to CUDA & Basic GPU Queries
+# Day 1: Introduction to CUDA & Basic GPU Queries
 
 **Key Learnings:**
 - **CUDA Initialization & Device Query:**  
@@ -21,7 +21,7 @@ printf("GPU Name: %s\n", props.name);
 printf("Compute Capability: %d.%d\n", props.major, props.minor);
 ```
 
-## Day 2: Vector Addition Acceleration
+# Day 2: Vector Addition Acceleration
 
 **Objective:**  
 - Accelerate vector addition on a very large vector (size = \(10^8\)) using CUDA.
@@ -53,7 +53,7 @@ __global__ void addVector(int *a, int *b, int *c)
 ```
 
 
-## Day 3: Matrix Multiplication Acceleration 
+# Day 3: Matrix Multiplication Acceleration 
 
  **Objective:**  
  - Accelerate matrix multiplication for a square matrix of size \(N \times N\) (where \(N = 1000\)) using CUDA. 
@@ -94,7 +94,7 @@ __global__ void addVector(int *a, int *b, int *c)
  }
 ```
 
-## Day 4: CUDA Image Processing - RGB to Grayscale & Image Blurring
+# Day 4: CUDA Image Processing - RGB to Grayscale & Image Blurring
 
 ---
 
@@ -200,7 +200,7 @@ __global__ void imageBlur(unsigned char *img_in, unsigned char *img_out, int img
 }
 ```
 
-## Day 5: GPU Accelerated Array Summation
+# Day 5: GPU Accelerated Array Summation
 
 **Objective:**
 - **Random Array Initialization:** Using CUDA's `curand` library to populate an array with random integers.
@@ -264,7 +264,7 @@ __global__ void calcSum(int *arr_in, int *arr_out, int N)
 - **Execution Time on GPU -** 0.831488 ms
 
 
-## Day 6: GPU Accelerated Matrix Multiplication with Tiling
+# Day 6: GPU Accelerated Matrix Multiplication with Tiling
 
 **Objective:**
 - **Random Matrix Initialization:** Use CUDA's `curand` library to populate two matrices with random integers.
@@ -337,7 +337,7 @@ __global__ void matMulTiled(int *a, int *b, int *c)
 - **Execution Time on GPU for a Tiled approach -** 277.286774 ms
 
 
-## Day 7: GPU Accelerated Gaussian Blur with PyCUDA
+# Day 7: GPU Accelerated Gaussian Blur with PyCUDA
 
 **Objective:**
 - **Gaussian Blur Kernel:** Developed a CUDA kernel for applying Gaussian blur to RGB images.
@@ -397,7 +397,7 @@ extern "C" __global__ void imageBlur(unsigned char *img_in, unsigned char *img_o
 **Results:**
 ![Output Plot](day7/output_plot.png)
 
-## Day 8: GPU Accelerated 2D Convolution with He Normal Initialization
+# Day 8: GPU Accelerated 2D Convolution with He Normal Initialization
 
 **Objective:**
 - **2D Convolution Kernel:** Developed a CUDA kernel to perform 2D convolution on an input matrix with a given filter.
@@ -444,7 +444,7 @@ __global__ void conv2D(float *input, float *output, float *filter, int radius, i
 - **Execution Time on GPU -** 0.01 ms
 
 
-## Day 9: Laplacian Edge Detection with PyCUDA
+# Day 9: Laplacian Edge Detection with PyCUDA
 
 **Objective:**
 - **Revisit Day 4 Techniques:** Recalled and applied the grayscale conversion and image blurring methods learned on Day 4.
@@ -520,31 +520,219 @@ extern "C" __global__ void edgeDetectionLaplacianConv2D(float *input, float *out
 **Results:**
 ![Output Plot](day9/output_plot.png)
 
-### **Day 10**
-- Implemented a tiled convolutional kernels which handles cases where the input and output sizes of matrices does not match.
-- Understood the concept of halo cells and shared memory.
-- Results:
-  - GPU Tiled Convolution Execution Time: 0.07 ms
-  - CPU Tiled Convolution Execution Time: 0.66 ms
+# Day 10: Tiled 2D Convolution for Enhanced Performance
 
- ### **Day 11**
- - Learned about 3D arrays and how they are stored in the memory.
- - Implemented a simple stencil sweep kernel.
- - Results:
-   - GPU time: 36.248322 ms
-   - CPU time: 201.901993 ms
+**Objective:**
+- **Tiled 2D Convolution Kernel:** Optimize the 2D convolution kernel from Day 8 using tiling to enhance performance.
+- **Shared Memory Utilization:** Implement tiling by leveraging shared memory to reduce global memory accesses.
+- **Constant Memory for Filter:** Store the convolution filter in constant memory for faster access within the kernel.
+- **Performance Benchmarking:** Compare the execution time of the tiled GPU convolution against a CPU implementation to quantify performance gains.
 
- ### **Day 12**
- - Implemented a tiled stencil sweep kernel.
- - Results for N = 256:
-   - GPU time: 36.248322 ms
-   - Tiled GPU time 18.025248 ms
-   - CPU time: 201.901993 ms
+**Key Learnings:**
+- **Tiled Convolution:** Learned and implemented tiled convolution, a technique that breaks down the input data into smaller blocks (tiles) to improve data locality and cache utilization.
+- **Shared Memory Optimization:** Utilized shared memory to create on-chip tiles of the input matrix, significantly reducing redundant fetches from global memory for each pixel's neighborhood.
+- **Constant Memory Usage:**  Explored the use of constant memory to store the convolution filter. Constant memory is cached and offers faster read access compared to global memory, especially when the same filter is repeatedly accessed by all threads.
+- **Performance Improvement:** Achieved substantial performance improvement over the naive convolution by minimizing global memory bandwidth usage through tiling and shared memory.
 
- ### **Day 13**
- - Implemented a thread coarsed stencil sweep kernel.
- - Results for N = 256:
-   - GPU time: 36.248322 ms
-   - Tiled GPU time 18.025248 ms
-   - Thread Coarsed GPU time: 7.199744 ms
-   - CPU time: 201.901993 ms
+**Tiled 2D Convolution Kernel:**
+```c
+__constant__ float filter[2 * RADIUS + 1][2 * RADIUS + 1];
+
+__global__ void conv2D(float *input, float *output, int N, int M) 
+{
+    int row = blockIdx.y * OUT_TILE_DIM + threadIdx.y - RADIUS;
+    int col = blockIdx.x * OUT_TILE_DIM + threadIdx.x - RADIUS;
+
+    __shared__ float N_shared[IN_TILE_DIM][IN_TILE_DIM];
+
+    if (row >= 0 && row < N && col >= 0 && col < M)
+        N_shared[threadIdx.y][threadIdx.x] = input[row * M + col];
+    else
+        N_shared[threadIdx.y][threadIdx.x] = 0.0f;
+    __syncthreads();
+
+    int tile_row = threadIdx.y - RADIUS;
+    int tile_col = threadIdx.x - RADIUS;
+
+    if (tile_row >= 0 && tile_row < OUT_TILE_DIM && tile_col >= 0 && tile_col < OUT_TILE_DIM) 
+    {
+        int out_row = blockIdx.y * OUT_TILE_DIM + tile_row;
+        int out_col = blockIdx.x * OUT_TILE_DIM + tile_col;
+        if (out_row < N && out_col < M) 
+        {
+            float val = 0.0f;
+            int f_size = 2 * RADIUS + 1;
+            for (int row_f = 0; row_f < f_size; row_f++) 
+            {
+                for (int col_f = 0; col_f < f_size; col_f++) 
+                {
+                    val += filter[row_f][col_f] * 
+                           N_shared[threadIdx.y + row_f - RADIUS][threadIdx.x + col_f - RADIUS];
+                }
+            }
+            output[out_row * M + out_col] = val;
+        }
+    }
+}
+```
+
+**Results:**
+  - **Tiled Convolution Execution Time on GPU:** 0.07 ms
+  - **Convolution Execution Time on CPU:** 0.66 ms
+
+# Day 11: 3D Stencil Operation Acceleration
+
+**Objective:**
+- **3D Stencil Kernel:** Develop a CUDA kernel to perform a 3D stencil operation.
+- **3D Grid and Block Configuration:** Utilize a 3D grid and block configuration to process 3D data efficiently.
+- **Performance Benchmarking:** Compare the performance of the GPU-accelerated 3D stencil operation with a CPU-based implementation.
+
+**Key Learnings:**
+- **3D Kernel Development:** Extended kernel development skills to 3D operations. Learned how to write a CUDA kernel (`stencilGPU`) to perform stencil calculations in three dimensions, processing volumetric data.
+- **3D Grid & Block Configuration:**  Configured 3D grids and blocks to map effectively to the 3D data space. This allows for parallel processing across all three dimensions of the data, which is essential for efficient 3D stencil computations.
+- **3D Stencil Operation Implementation:** Implemented a 7-point 3D stencil operation where each point in the 3D grid is updated based on its current value and the values of its 6 immediate neighbors in 3D space (left, right, up, down, front, and back).
+- **Performance Gain in 3D Processing:** Observed a significant performance speedup on the GPU compared to the CPU for the 3D stencil operation, highlighting the benefits of GPU acceleration for computationally intensive 3D data processing.
+
+**3D Stencil Kernel:**
+```c
+__constant__ float val[7];
+
+__global__ void stencilGPU(float *input, float *output, float *val, int N)
+{
+    int depth = blockIdx.z * blockDim.z + threadIdx.z;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if(depth >=1 && depth < N - 1 && row >=1 && row < N - 1 && col >=1 && col < N - 1)
+    {
+        output[depth * N * N + row * N + col] = val[0] * input[depth * N * N + row * N + col] +
+                                                val[1] * input[depth * N * N + row * N + col - 1] +
+                                                val[2] * input[depth * N * N + row * N + col + 1] +
+                                                val[3] * input[depth * N * N + (row - 1) * N + col] +
+                                                val[4] * input[depth * N * N + (row + 1) * N + col] +
+                                                val[5] * input[(depth - 1) * N * N + row * N + col] +
+                                                val[6] * input[(depth + 1) * N * N + row * N + col];
+    }
+}
+```
+
+**Results:**
+   - **GPU Execution time:** 36.248322 ms
+   - **CPU Execution time:** 201.901993 ms
+
+# Day 12: Optimized 3D Stencil Operation with Tiling
+
+**Objective:**
+- **Tiled 3D Stencil Kernel:** Optimize the 3D stencil operation from Day 11 by implementing tiling.
+- **Shared Memory Optimization:**  Enhance data locality and reduce global memory access by utilizing shared memory in the 3D stencil kernel.
+- **Performance Comparison:**  Compare the performance of the tiled 3D stencil GPU kernel against the naive GPU and CPU implementations from Day 11.
+
+**Key Learnings:**
+- **Tiled 3D Stencil Implementation:** Learned to apply tiling techniques to 3D stencil operations. This involves dividing the 3D data into smaller tiles and processing each tile in parallel, which improves cache utilization and reduces global memory traffic.
+- **Shared Memory for 3D Tiling:**  Effectively used shared memory to create local 3D tiles within each thread block. This allows threads within a block to quickly access neighboring data points required for the stencil calculation, stored in fast shared memory instead of slower global memory.
+- **Performance Optimization through Tiling:**  Observed a significant performance improvement by using the tiled approach compared to the naive GPU implementation from Day 11, as well as a much larger speedup compared to the CPU. Tiling and shared memory are crucial for optimizing memory-bound computations like stencil operations.
+
+**Tiled 3D Stencil Kernel:**
+```c
+__global__ void tiledStencilGPU(float *input, float *output, float *val, int N)
+{
+    int depth = blockIdx.z * OUT_TILE_DIM + threadIdx.z - ORDER;
+    int row = blockIdx.y * OUT_TILE_DIM + threadIdx.y - ORDER;
+    int col = blockIdx.x * OUT_TILE_DIM + threadIdx.x - ORDER;
+
+    __shared__ float inp_s[IN_TILE_DIM][IN_TILE_DIM][IN_TILE_DIM];
+
+    if(depth >=1 && depth < N && row >=1 && row < N && col >=1 && col < N)
+    {
+        inp_s[threadIdx.z][threadIdx.y][threadIdx.x] = input[depth * N * N + row * N + col];
+    }
+    __syncthreads();
+
+    if(depth >=1 && depth < N - 1 && row >=1 && row < N - 1 && col >=1 && col < N - 1)
+    {
+        if(threadIdx.z >=1 && threadIdx.z < IN_TILE_DIM - 1 && threadIdx.y >=1 && threadIdx.y < IN_TILE_DIM - 1 && threadIdx.x >=1 && threadIdx.x < IN_TILE_DIM - 1)
+        {
+            output[depth * N * N + row * N + col] = val[0] * inp_s[threadIdx.z][threadIdx.y][threadIdx.x] +
+                                                val[1] * inp_s[threadIdx.z][threadIdx.y][threadIdx.x - 1] +
+                                                val[2] * inp_s[threadIdx.z][threadIdx.y][threadIdx.x + 1] +
+                                                val[3] * inp_s[threadIdx.z][threadIdx.y - 1][threadIdx.x] +
+                                                val[4] * inp_s[threadIdx.z][threadIdx.y + 1][threadIdx.x] +
+                                                val[5] * inp_s[threadIdx.z - 1][threadIdx.y][threadIdx.x] +
+                                                val[6] * inp_s[threadIdx.z + 1][threadIdx.y][threadIdx.x];
+        }
+    }
+}
+```
+**Results (for N = 256):**
+   - **GPU Execution time for tiled approach:** 18.025248 ms
+   - **GPU Execution time:** 36.248322 ms
+   - **CPU Execution time:** 201.901993 ms
+
+# Day 13: Thread Coarsening for 3D Stencil Operation
+
+**Objective:**
+- **Thread Coarsening Optimization:** Implement thread coarsening in the 3D tiled stencil kernel to further optimize performance.
+- **Reduced Thread Granularity:** Explore thread coarsening as a method to reduce thread overhead and improve efficiency, particularly in memory-bound operations.
+- **Performance Benchmarking:** Evaluate and compare the performance of the thread-coarsened GPU stencil kernel against the naive GPU, tiled GPU, and CPU implementations from previous days.
+
+**Key Learnings:**
+- **Thread Coarsening Technique:** Learned and applied thread coarsening, a strategy to reduce the number of threads launched by having each thread do more work. In the context of stencil operations, this means assigning each thread to compute the stencil for multiple points in the depth dimension.
+- **Implementation of Coarsened Tiling:**  Implemented thread coarsening within the tiled 3D stencil kernel (`threadCoarsedStencilGPU`). This kernel reduces the granularity of thread assignment along the depth dimension, allowing each thread to process a "coarser" chunk of data, specifically along the Z-axis.
+- **Benefits of Thread Coarsening:** Observed that thread coarsening can further improve performance by reducing thread management overhead and potentially increasing instruction throughput per thread. By reducing the number of threads, we also reduce synchronization points and can better utilize shared memory for larger tiles in the XY planes within each coarser thread block.
+- **Enhanced Performance over Tiled Approach:** Achieved additional performance gains compared to the tiled GPU implementation from Day 12, demonstrating that thread coarsening is an effective optimization, especially when combined with tiling for stencil operations.
+
+**Thread Coarsened 3D Stencil Kernel:**
+```c
+__global__ void threadCoarsedStencilGPU(float *input, float *output, float *val, int N)
+{
+    int depth = blockIdx.z * OUT_TILE_COARSED;
+    int row = blockIdx.y * OUT_TILE_COARSED + threadIdx.y - ORDER;
+    int col = blockIdx.x * OUT_TILE_COARSED + threadIdx.x - ORDER;
+
+    __shared__ float prev[IN_TILE_COARSED][IN_TILE_COARSED];
+    __shared__ float curr[IN_TILE_COARSED][IN_TILE_COARSED];
+    __shared__ float next[IN_TILE_COARSED][IN_TILE_COARSED];
+
+    if(depth >= 1 && depth < N - 1 && row >= 0 && row < N && col >= 0 && col < N)
+    {
+        prev[threadIdx.y][threadIdx.x] = input[depth * N * N + row * N + col];
+    }
+
+    if(depth >= 0 && depth < N && row >= 0 && row < N && col >= 0 && col < N)
+    {
+        curr[threadIdx.y][threadIdx.x] = input[depth * N * N + row * N + col];
+    }
+
+    for (int n_layer = depth; n_layer < depth + OUT_TILE_COARSED; n_layer++)
+    {
+        if(n_layer >= 1 && n_layer < N - 1 && row >= 0 && row < N && col >= 0 && col < N)
+        {
+            next[threadIdx.y][threadIdx.x] = input[(n_layer + 1) * N * N + row * N + col];
+        }
+        __syncthreads();
+
+        if(n_layer >=1 && depth < N - 1 && row >=1 && row < N - 1 && col >=1 && col < N - 1)
+        {
+            if(threadIdx.y >=1 && threadIdx.y < IN_TILE_DIM - 1 && threadIdx.x >=1 && threadIdx.x < IN_TILE_DIM - 1)
+            {
+                output[n_layer * N * N + row * N + col] = val[0] * curr[threadIdx.y][threadIdx.x] +
+                                                val[1] * curr[threadIdx.y][threadIdx.x - 1] +
+                                                val[2] * curr[threadIdx.y][threadIdx.x + 1] +
+                                                val[3] * curr[threadIdx.y - 1][threadIdx.x] +
+                                                val[4] * curr[threadIdx.y + 1][threadIdx.x] +
+                                                val[5] * prev[threadIdx.y][threadIdx.x] +
+                                                val[6] * next[threadIdx.y][threadIdx.x];
+            }
+        }
+        __syncthreads();
+        prev[threadIdx.y][threadIdx.x] = curr[threadIdx.y][threadIdx.x];
+        curr[threadIdx.y][threadIdx.x] = next[threadIdx.y][threadIdx.x];
+    }
+}
+```
+
+**Results (for N = 256):**
+   - **GPU Execution time for tiled and thread coarsed approach:** 7.199744 ms
+   - **GPU Execution time for tiled approach:** 18.025248 ms
+   - **GPU Execution time:** 36.248322 ms
+   - **CPU Execution time:** 201.901993 ms
