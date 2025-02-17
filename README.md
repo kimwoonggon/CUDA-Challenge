@@ -73,3 +73,10 @@ Thanks to [Umar Jamil](https://github.com/hkproj/100-days-of-gpu) for organizing
  - Results:
    - GPU time: 3.867808 ms
    - CPU time: 23.410000 ms
+
+ ### **Day 12**
+ - Implemented a tiled stencil sweep kernel.
+ - Results for N = 256:
+   - GPU time: 31.339520 ms
+   - Tiled GPU time 3.937984 ms
+   - CPU time: 185.710999 ms
