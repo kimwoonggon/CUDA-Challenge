@@ -394,6 +394,9 @@ extern "C" __global__ void imageBlur(unsigned char *img_in, unsigned char *img_o
 }
 ```
 
+**Results:**
+![Output Plot](day7/output_plot.png)
+
 ## Day 8: GPU Accelerated 2D Convolution with He Normal Initialization
 
 **Objective:**
