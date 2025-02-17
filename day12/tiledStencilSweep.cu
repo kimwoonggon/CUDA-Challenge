@@ -3,15 +3,15 @@
 #include <time.h>
 #include <curand_kernel.h>
 
-#define DIMENTION 1
-#define IN_TILE_DIM 16
-#define OUT_TILE_DIM (IN_TILE_DIM - 2 * DIMENTION)
+#define ORDER 1
+#define IN_TILE_DIM 8
+#define OUT_TILE_DIM (IN_TILE_DIM - 2 * ORDER)
 
 __global__ void tiledStencilGPU(float *input, float *output, float *val, int N)
 {
-    int depth = blockIdx.z * OUT_TILE_DIM + threadIdx.z - DIMENTION;
-    int row = blockIdx.y * OUT_TILE_DIM + threadIdx.y - DIMENTION;
-    int col = blockIdx.x * OUT_TILE_DIM + threadIdx.x - DIMENTION;
+    int depth = blockIdx.z * OUT_TILE_DIM + threadIdx.z - ORDER;
+    int row = blockIdx.y * OUT_TILE_DIM + threadIdx.y - ORDER;
+    int col = blockIdx.x * OUT_TILE_DIM + threadIdx.x - ORDER;
 
     __shared__ float inp_s[IN_TILE_DIM][IN_TILE_DIM][IN_TILE_DIM];
 
