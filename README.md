@@ -279,7 +279,7 @@ Managed memory is used to simplify data handling between the host and device, an
 - **Performance Benchmarking:** Measured and compared CPU vs GPU performance for large-scale matrix multiplication.
 - **Memory Management:** Leveraged CUDA Unified Memory for streamlined host-device data management.
 
-**Random Matrix Initialization Kernel:**
+**Tiled Matrix Multiplication Kernel:**
 ```c
 __global__ void matMulTiled(int *a, int *b, int *c)
 {
@@ -328,18 +328,104 @@ __global__ void matMulTiled(int *a, int *b, int *c)
 ```
 
 
-### **Day 7**
-- Recalled learnings for Day4.
-- Developed a kernel for Gaussian Blur of RGB images.
-- Learnt pycuda and its implementation.
-- Compared the custom kernel's results with OpenCV's built-in functions.
+## Day 7: GPU Accelerated Gaussian Blur with PyCUDA
 
-### **Day 8**
-- Developed a 2D convolutional filter kernel.
-- Initialized filter weights using He Normal Initialization.
-- Performance:-
-  - GPU Convolution Execution Time: 0.01 ms
-  - CPU Convolution Execution Time: 0.68 ms
+**Objective:**
+- **Gaussian Blur Kernel:** Developed a CUDA kernel for applying Gaussian blur to RGB images.
+- **PyCUDA Integration:** Learned to use PyCUDA for kernel invocation and managing GPU memory.
+- **Comparison with OpenCV:** Compared the results of the custom CUDA kernel with OpenCV's built-in Gaussian blur function.
+
+The kernel applies a Gaussian filter to each pixel of an RGB image by computing a weighted average over a neighborhood defined by the blur radius and sigma (variance). The implementation uses PyCUDA to load the compiled PTX module and execute the kernel.
+
+**Key Learnings:**
+- **CUDA Kernel Development:** Wrote a kernel to perform Gaussian blur on RGB images, handling boundary conditions and computing the Gaussian weights.
+- **PyCUDA Usage:** Learned how to allocate GPU memory, copy data to/from the device, and launch kernels using PyCUDA.
+- **Image Processing Comparison:** Verified the custom kernel’s performance and output by comparing it with OpenCV's Gaussian blur implementation.
+
+**Gaussian Blur Kernel:**
+```c
+extern "C" __global__ void imageBlur(unsigned char *img_in, unsigned char *img_out, int img_w, int img_h, int blur_radius, int sigma)
+{
+    int t_x = blockIdx.x * blockDim.x + threadIdx.x;
+    int t_y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if ( t_x < img_w && t_y < img_h)
+    {
+        float r = 0.0f;
+        float g = 0.0f;
+        float b = 0.0f;
+        float val = 0.0f;
+
+        for(int row = -blur_radius; row <= blur_radius; row++)
+        {
+            for(int col = -blur_radius; col <= blur_radius; col++)
+            {
+                int cur_row = t_y + row;
+                int cur_col = t_x + col;
+
+                if(cur_row < img_h && cur_row >= 0 && cur_col < img_w && cur_col >= 0)
+                {
+                    float gauss = expf(-(row * row + col * col) / (2.0 * sigma * sigma));
+
+                    int channel = (cur_row * img_w + cur_col) * 3;
+                    r += gauss * img_in[channel];
+                    g += gauss * img_in[channel + 1];
+                    b += gauss * img_in[channel + 2];
+
+                    val += gauss;
+                }
+            }
+        }
+
+        int n = (t_y * img_w + t_x) * 3;
+        img_out[n]   = (unsigned char)(roundf(r / val));
+        img_out[n+1] = (unsigned char)(roundf(g / val));
+        img_out[n+2] = (unsigned char)(roundf(b / val));
+    }
+}
+```
+
+## Day 8: GPU Accelerated 2D Convolution with He Normal Initialization
+
+**Objective:**
+- **2D Convolution Kernel:** Developed a CUDA kernel to perform 2D convolution on an input matrix with a given filter.
+- **He Normal Initialization:** Initialized filter weights using He Normal Initialization for better weight distribution.
+- **Performance Benchmarking:** Measured and compared GPU and CPU execution times for convolution.
+
+The 2D convolution kernel applies a filter over the input data with boundary checking, while the filter weights are initialized using a He Normal distribution. Additionally, a verification kernel is used to compare the GPU results with the CPU implementation.
+
+**Key Learnings:**
+- **2D Convolution in CUDA:** Implemented a convolution kernel with nested loops and boundary conditions.
+- **He Normal Initialization:** Utilized CUDA's random number generation to initialize filter weights based on the He Normal method.
+- **Performance Measurement:** Employed CUDA events to time the GPU kernel and compared it to a CPU version.
+- **Result Verification:** Counted mismatches between GPU and CPU results using atomic operations.
+
+---
+
+**GPU Convolution Kernel:**
+```c
+__global__ void conv2D(float *input, float *output, float *filter, int radius, int N) {
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if (row < N && col < N) {
+        float val = 0.0f;
+        int f_size = 2 * radius + 1;
+
+        for (int row_f = 0; row_f < f_size; row_f++) {
+            for (int col_f = 0; col_f < f_size; col_f++) {
+                int cur_row = row - radius + row_f;
+                int cur_col = col - radius + col_f;
+
+                if (cur_row >= 0 && cur_row < N && cur_col >= 0 && cur_col < N) {
+                    val += filter[row_f * f_size + col_f] * input[cur_row * N + cur_col]; 
+                }
+            }
+        }
+        output[row * N + col] = val;
+    }
+}
+
 
 ### **Day 9**
 - Recalled Learnings from Day 4 to convert an image to grayscale.
