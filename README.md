@@ -21,26 +21,187 @@ printf("GPU Name: %s\n", props.name);
 printf("Compute Capability: %d.%d\n", props.major, props.minor);
 ```
 
-### **Day 2**  
-- Optimized **Vector Addition Acceleration** for a **10⁸**-sized vector on RTX A4000.  
-- Developed two CUDA kernels:  
-  - **Multi-stream initialization acceleration** for efficient data loading.  
-  - **Strided approach for vector addition** to optimize memory access.  
+### Day 2: Vector Addition Acceleration
 
-### **Day 3**
-- Optimized **Matrix Multiplication Acceleration** for a NxN matrix of size N = 1000.
-- Developed two CUDA kernels:
-  - **Multi-stream initialization acceleration** with 2D blocks and with a strided approach.
-  - **2D strided memory access** for efficient multiplication.
-- Explored **dim3()** for multi-dimensional thread and block configuration.
+**Objective:**  
+- Accelerate vector addition on a very large vector (size = \(10^8\)) using CUDA.
+- Utilize multi-stream initialization for efficient data loading.
+- Employ a strided approach to optimize memory access.
+- Compare GPU performance with CPU performance.
 
-### **Day 4**
-- Developed two CUDA kernels:
-  - **RGB to Grayscale conversion**.
-  - **Blurring of the Grayscale image**.
-- Learnt Python bindings:
-  - Converted CUDA kernels into a shared object (.so) file.
-  - Integrated and executed the CUDA kernels from Python.
+**Key Learnings:**  
+- **Memory Allocation:** How to allocate large arrays on the GPU using `cudaMalloc`.
+- **Strided Memory Access:** Implementing kernels that process elements in a strided loop so that all threads contribute evenly.
+- **CUDA Streams:** Overlapping initialization of multiple arrays concurrently using separate CUDA streams.
+- **Performance Boost:** Observing a significant speed-up on the RTX A4000 compared to CPU execution.
+
+**Vector Addition Kernel:**  
+```c
+__global__ void addVector(int *a, int *b, int *c)
+{
+    int t_ID = blockIdx.x * blockDim.x + threadIdx.x;
+    int stride = gridDim.x * blockDim.x;
+
+    if(t_ID < N)
+    {
+        for (int i = t_ID; i < N; i += stride)
+        {
+            c[i] = a[i] + b[i];
+        }
+    }
+}
+```
+
+
+### Day 3: Matrix Multiplication Acceleration 
+
+ **Objective:**  
+ - Accelerate matrix multiplication for a square matrix of size \(N \times N\) (where \(N = 1000\)) using CUDA. 
+ - Implement a 2D grid and block configuration tailored for matrix multiplication. 
+ - Develop a GPU kernel to efficiently perform matrix multiplication in parallel.
+ - Compare the performance of GPU-accelerated matrix multiplication against a CPU-based implementation. 
+
+ **Key Learnings:**  
+ - **2D Grid & Block Configuration for Matrices:** Understood how to design and configure 2D grids and blocks in CUDA to map effectively onto matrix dimensions. This configuration is crucial for parallelizing matrix operations, allowing different blocks and threads to work on different parts of the matrices concurrently.
+ - **Efficient GPU Matrix Multiplication Kernel (`matMulGPU`):** Implemented a highly parallel CUDA kernel, `matMulGPU`, specifically for matrix multiplication. This kernel utilizes a 2D thread structure to calculate elements of the output matrix in parallel, leveraging the GPU's massive computational power.
+ - **Parallel Matrix Element Calculation:** Learned how to structure the `matMulGPU` kernel so that each thread computes a subset of elements in the result matrix `c`. The kernel employs nested loops and thread indexing to ensure that all necessary multiplication and addition operations are performed in a distributed and parallel manner across the GPU.
+ - **Performance Speedup:** Observed a significant performance improvement when using the `matMulGPU` kernel compared to the traditional CPU-based matrix multiplication, demonstrating the effectiveness of GPU acceleration for computationally intensive matrix operations.
+
+ **Matrix Multiplication Kernel:**  
+ ```c 
+ __global__ void matMulGPU(int *a, int *b, int *c)  
+ {  
+      int t_x = blockIdx.x * blockDim.x + threadIdx.x;  
+      int t_y = blockIdx.y * blockDim.y + threadIdx.y;  
+
+      int strideX = gridDim.x * blockDim.x;  
+      int strideY = gridDim.y * blockDim.y + threadIdx.y;  
+
+      int val = 0;  
+
+      for (int  i = t_x; i < N; i += strideX)  
+      {  
+          for (int j = t_y; j < N; j += strideY)  
+          {  
+              for ( int k = 0; k < N; k++)  
+              {  
+                  val += a[i * N + k] * b[k * N + j];  
+              }  
+              c[i * N + j] = val;  
+              val = 0;  
+          }  
+      }  
+ }
+```
+
+# Day 4: CUDA Image Processing - RGB to Grayscale & Image Blurring
+
+---
+
+## Overview
+
+In Day 4, we tackle two image processing tasks using CUDA:
+1. **RGB to Grayscale Conversion:** Convert a color image to grayscale by applying a weighted sum on the RGB channels.
+2. **Image Blurring:** Apply a box blur filter to a grayscale image by averaging neighboring pixel values.
+
+Both tasks utilize 2D grid and block configurations for parallel processing and demonstrate CUDA memory management and kernel launching.
+
+---
+
+## Part 1: RGB to Grayscale Conversion
+
+**Objective:**  
+- Convert an RGB image to grayscale.
+- Learn to manage multiple color channels and apply the weighted formula:  
+  \[
+  \text{Gray} = 0.21 \times R + 0.71 \times G + 0.07 \times B
+  \]
+- Utilize CUDA kernels with 2D grid and block configurations to process each pixel in parallel.
+
+**Key Learnings:**  
+- Allocating device memory for both the RGB input and grayscale output.
+- Configuring 2D grids/blocks (e.g., 32×32 threads) to cover the entire image.
+- Transferring data between host and device efficiently.
+- Integrating CUDA kernels with Python using shared libraries for easy invocation.
+
+**RGB to Grayscale Kernel:**  
+```c
+__global__ void RGB2Grayscale(unsigned char *rgb_img_in, unsigned char *gray_img_out, int img_w, int img_h) 
+{
+    int t_x = blockIdx.x * blockDim.x + threadIdx.x;
+    int t_y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    int strideX = gridDim.x * blockDim.x;
+    int strideY = gridDim.y * blockDim.y;
+
+    if(t_x < img_w && t_y < img_h)
+    {
+        for (int i = t_x; i < img_w; i += strideX)
+        {
+            for (int j = t_y; j < img_h; j += strideY)
+            {
+                int grayOffset = j * img_w + i;
+                int rgbOffset = grayOffset * CHANNELS;
+
+                unsigned char r = rgb_img_in[rgbOffset];
+                unsigned char g = rgb_img_in[rgbOffset + 1];
+                unsigned char b = rgb_img_in[rgbOffset + 2];
+
+                gray_img_out[grayOffset] = 0.21f * r + 0.71f * g + 0.07f * b;
+            }
+        }
+    }
+}
+```
+#### Part 2: Image Blurring
+
+**Objective:**
+- Apply a box blur filter to a grayscale image.
+- Process each pixel by averaging values in a neighborhood defined by `BLUR_SIZE` (resulting in a window of size \((2 \times \text{BLUR\_SIZE} + 1) \times (2 \times \text{BLUR\_SIZE} + 1)\)).
+- Use strided loops within the kernel to cover the entire image and handle boundary conditions.
+
+**Key Learnings:**
+- Processing pixel neighborhoods (convolution) in parallel.
+- Handling image boundaries by checking valid indices.
+- Efficiently transferring data between host and device.
+
+**Image Blurring Kernel:**
+```c
+__global__ void imageBlur(unsigned char *img_in, unsigned char *img_out, int img_w, int img_h)
+{
+    int t_x = blockIdx.x * blockDim.x + threadIdx.x;
+    int t_y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    int strideX = gridDim.x * blockDim.x;
+    int strideY = gridDim.y * blockDim.y;
+
+    for (int i = t_x; i < img_w; i += strideX)
+    {
+        for (int j = t_y; j < img_h; j += strideY)
+        {
+            int pix_val = 0;
+            int n_pixels = 0;
+
+            for (int row = -BLUR_SIZE; row <= BLUR_SIZE; row++)
+            {
+                for (int col = -BLUR_SIZE; col <= BLUR_SIZE; col++)
+                {
+                    int cur_row = j + row;
+                    int cur_col = i + col;
+
+                    if (cur_row >= 0 && cur_row < img_h && cur_col >= 0 && cur_col < img_w)
+                    {
+                        pix_val += img_in[cur_row * img_w + cur_col];
+                        n_pixels++;
+                    }
+                }
+            }
+
+            img_out[j * img_w + i] = (unsigned char)(pix_val / n_pixels);
+        }
+    }
+}
+```
 
 ### **Day 5**
 - Developed a kernel for summation of array acceleration using a partial sum approach.
