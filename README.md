@@ -63,7 +63,7 @@ __global__ void addVector(int *a, int *b, int *c)
 
  **Key Learnings:**  
  - **2D Grid & Block Configuration for Matrices:** Understood how to design and configure 2D grids and blocks in CUDA to map effectively onto matrix dimensions. This configuration is crucial for parallelizing matrix operations, allowing different blocks and threads to work on different parts of the matrices concurrently.
- - **Efficient GPU Matrix Multiplication Kernel (`matMulGPU`):** Implemented a highly parallel CUDA kernel, `matMulGPU`, specifically for matrix multiplication. This kernel utilizes a 2D thread structure to calculate elements of the output matrix in parallel, leveraging the GPU's massive computational power.
+ - **Efficient GPU Matrix Multiplication Kernel:** Implemented a highly parallel CUDA kernel, `matMulGPU`, specifically for matrix multiplication. This kernel utilizes a 2D thread structure to calculate elements of the output matrix in parallel, leveraging the GPU's massive computational power.
  - **Parallel Matrix Element Calculation:** Learned how to structure the `matMulGPU` kernel so that each thread computes a subset of elements in the result matrix `c`. The kernel employs nested loops and thread indexing to ensure that all necessary multiplication and addition operations are performed in a distributed and parallel manner across the GPU.
  - **Performance Speedup:** Observed a significant performance improvement when using the `matMulGPU` kernel compared to the traditional CPU-based matrix multiplication, demonstrating the effectiveness of GPU acceleration for computationally intensive matrix operations.
 
@@ -158,7 +158,7 @@ __global__ void RGB2Grayscale(unsigned char *rgb_img_in, unsigned char *gray_img
 - Use strided loops within the kernel to cover the entire image and handle boundary conditions.
 
 **Key Learnings:**
-- Processing pixel neighborhoods (convolution) in parallel.
+- Processing pixel neighborhoods in parallel.
 - Handling image boundaries by checking valid indices.
 - Efficiently transferring data between host and device.
 
@@ -200,11 +200,11 @@ __global__ void imageBlur(unsigned char *img_in, unsigned char *img_out, int img
 }
 ```
 
-## Day 5: GPU Accelerated Array Summation with CUDA Reduction
+## Day 5: GPU Accelerated Array Summation
 
 **Objective:**
 - **Random Array Initialization:** Using CUDA's `curand` library to populate an array with random integers.
-- **Parallel Reduction:** Summing array elements efficiently in parallel using shared memory.
+- **Partial Reduction:** Summing array elements efficiently in parallel using shared memory.
 - **Performance Benchmarking:** Comparing GPU performance against a CPU summation.
 
 Managed memory is used to simplify data handling between the host and device, and CUDA events are utilized for precise timing of the GPU kernel execution.
@@ -212,7 +212,7 @@ Managed memory is used to simplify data handling between the host and device, an
 **Key Learnings:**
 - **CUDA Random Number Generation:** Learnt how to initialize random states with `curand_init` and generate random numbers using `curand`.
 
-- **Parallel Reduction:** Implemented a reduction algorithm using shared memory and synchronization to sum large arrays efficiently.
+- **Partial Reduction:** Implemented a reduction algorithm using shared memory and synchronization to sum large arrays efficiently.
 
 - **Performance Benchmarking:** Measured and compared GPU and CPU execution times to highlight the benefits of parallel processing.
 
@@ -258,6 +258,10 @@ __global__ void calcSum(int *arr_in, int *arr_out, int N)
     }
 }
 ```
+
+**Results:**
+- **Execution Time on CPU -** 3.859000 ms
+- **Execution Time on GPU -** 0.831488 ms
 
 
 ## Day 6: GPU Accelerated Matrix Multiplication with Tiling
@@ -326,6 +330,11 @@ __global__ void matMulTiled(int *a, int *b, int *c)
     c[row * N + col] = val;
 }
 ```
+
+**Results:**
+- **Execution Time on CPU -** 51694.223000 ms
+- **Execution Time on GPU -** 675.109863 ms
+- **Execution Time on GPU for a Tiled approach -** 277.286774 ms
 
 
 ## Day 7: GPU Accelerated Gaussian Blur with PyCUDA
@@ -425,12 +434,85 @@ __global__ void conv2D(float *input, float *output, float *filter, int radius, i
         output[row * N + col] = val;
     }
 }
+```
+
+**Results:**
+- **Execution Time on CPU -** 0.68 ms
+- **Execution Time on GPU -** 0.01 ms
 
 
-### **Day 9**
-- Recalled Learnings from Day 4 to convert an image to grayscale.
-- Applied image blurring to smooth out noise, preventing the edge detection filter from capturing unwanted noise. This step also leveraged knowledge from Day 4.. Again, recalled Day 4 image blurring knowledge.
-- Developed a 2D convolutional kernel with a Laplacian edge detection filter on the blurred image.
+## Day 9: Laplacian Edge Detection with PyCUDA
+
+**Objective:**
+- **Revisit Day 4 Techniques:** Recalled and applied the grayscale conversion and image blurring methods learned on Day 4.
+- **Edge Detection:** Developed a 2D convolutional kernel that applies a Laplacian filter to the blurred image for edge detection.
+- **PyCUDA Integration:** Leveraged PyCUDA for GPU memory management, kernel execution, and data transfer, streamlining the overall workflow.
+
+**Key Learnings:**
+- **Grayscale Conversion & Blurring (Day 4 Revisited):**  
+  - Converted an RGB image to grayscale using a custom kernel.
+  - Applied image blurring to smooth out noise, which helps prevent the edge detection filter from capturing unwanted details.
+  
+- **2D Convolution & Laplacian Edge Detection:**  
+  - Developed a 2D convolution kernel that applies a Laplacian filter to the blurred image.
+  - This filter highlights edges by calculating second-order derivatives across the image.
+  
+- **PyCUDA Usage:**  
+  - Managed GPU memory allocation and data transfers.
+  - Loaded and invoked CUDA kernels from precompiled PTX modules.
+  - Set appropriate grid and block dimensions based on the image size.
+  - Enabled rapid experimentation and integration of custom CUDA kernels with Python.
+
+**Workflow Overview:**
+1. **Grayscale Conversion:** The RGB image is first converted to grayscale, simplifying the data for subsequent processing.
+   
+2. **Image Blurring:** The grayscale image is blurred using a custom kernel to reduce noise. This ensures that the edge detection step focuses on significant edges rather than spurious details.
+   
+3. **Data Type Conversion:** The blurred image is converted from integer to float format to prepare it for convolution operations.
+   
+4. **Laplacian Edge Detection:** A custom 2D convolution kernel applies a Laplacian filter to the blurred, float-converted image. This kernel computes the weighted sum of neighboring pixels to emphasize regions with high intensity changes (edges).
+   
+5. **Visualization:** The processed images (grayscale, blurred, and edge-detected) are transferred back to the host and displayed using Matplotlib, allowing for side-by-side comparison of the results.
+
+This approach demonstrates how foundational techniques from previous days can be integrated and extended using PyCUDA to build a robust GPU-accelerated image processing pipeline.
+
+**Laplacian Filter and Edge Detection Kernel**
+```C
+laplacian_filter = np.array([0, 1, 0,
+                             1, -4, 1,
+                             0, 1, 0],
+                             dtype=np.float32).flatten()
+```
+
+```C
+extern "C" __global__ void edgeDetectionLaplacianConv2D(float *input, float *output, float *filter, int img_w, int img_h) 
+{
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if(row < img_h && col < img_w) 
+    {
+        int radius = 1;
+        float val = 0.0f;
+        int f_size = 2 * radius + 1;
+
+        for(int row_f = 0; row_f < f_size; row_f++) 
+        {
+            for(int col_f = 0; col_f < f_size; col_f++) 
+            {
+                int cur_row = row - radius + row_f;
+                int cur_col = col - radius + col_f;
+
+                if(cur_row >=0 && cur_row < img_h && cur_col >= 0 && cur_col < img_w) 
+                {
+                    val += filter[row_f * f_size + col_f] * input[cur_row * img_w + cur_col]; 
+                }
+            }
+        }
+        output[row * img_w + col] = val;
+    }
+}
+```
 
 ### **Day 10**
 - Implemented a tiled convolutional kernels which handles cases where the input and output sizes of matrices does not match.
