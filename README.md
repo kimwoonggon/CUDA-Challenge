@@ -8,9 +8,8 @@ Welcome to my journey through the 100 Days of GPU Challenge!  This repository d
 
 Click on the links below to explore the details of each day's kernel to find a description of the kernel, the CUDA code, performance analysis, results for each day's learning, etc.
 
-*   **Day 1: Introduction to CUDA & Basic GPU Queries [Click here for details](./day1)**
-
-*   **Day 2: Vector Addition Acceleration [Click here for details](./day2)**
+*   **[Day 1: Introduction to CUDA & Basic GPU Queries (Click for details)](./day1)**
+*   **[Day 2: Vector Addition Acceleration](./day2)**
 *   **[Day 3: Matrix Multiplication Acceleration](./day3)**
 *   **[Day 4: CUDA Image Processing - RGB to Grayscale & Image Blurring](./day4)**
 *   **[Day 5: GPU Accelerated Array Summation](./day5)**
