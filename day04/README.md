@@ -103,3 +103,12 @@ __global__ void imageBlur(unsigned char *img_in, unsigned char *img_out, int img
     }
 }
 ```
+
+**Original Image:**
+![Output Plot](image.jpg)
+
+**Grayscale Image:**
+![Output Plot](grayscale.jpg)
+
+**Blurred Image:**
+![Output Plot](blurred.jpg)
