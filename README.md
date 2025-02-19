@@ -33,3 +33,5 @@ Click on the links below to explore the details of each day's kernel to find a d
 -   **Day 12: Optimized 3D Stencil Operation with Tiling** [(Click for details)](./day12)
 
 -   **Day 13: Thread Coarsening for 3D Stencil Operation** [(Click for details)](./day13)
+
+-   **Histogram Calculation Optimization with Privatization and Shared Memory** [(Click for details)](./day14)
