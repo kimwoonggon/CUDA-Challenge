@@ -23,7 +23,7 @@ __global__ void histPvtSharedGPU(unsigned int *data, unsigned int *hist)
 {
     unsigned int t_i = blockIdx.x * blockDim.x + threadIdx.x;
 
-    __shared__ unsigned int hist_s[TOTAL_BINS];
+    __shared__ unsigned int hist_s[BINS];
     for(unsigned bin = threadIdx.x; bin < BINS; bin += blockDim.x)
     {
         hist_s[bin] = 0u;
@@ -34,13 +34,13 @@ __global__ void histPvtSharedGPU(unsigned int *data, unsigned int *hist)
     {
         if(data[t_i] > 0 && data[t_i] <= 100)
         {
-            atomicAdd(&hist_s[(blockIdx.x * BINS + (data_t_i] - 1)/20)], 1);
+            atomicAdd(&hist_s[(data[t_i] - 1)/20], 1);
         }
     }
     __syncthreads();
 
     for(unsigned bin = threadIdx.x; bin < BINS; bin += blockDim.x)
-    {
+    {   
         if(hist_s[bin] > 0)
         {
             atomicAdd(&hist[bin], hist_s[bin]);
