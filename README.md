@@ -34,4 +34,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 
 -   **Day 13: Thread Coarsening for 3D Stencil Operation** [(Click for details)](./day13)
 
--   **Histogram Calculation Optimization with Privatization and Shared Memory** [(Click for details)](./day14)
+-   **Day 14: Histogram Calculation Optimization with Privatization and Shared Memory** [(Click for details)](./day14)
