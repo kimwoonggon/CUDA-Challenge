@@ -15,7 +15,7 @@
 - **Performance Improvement Analysis:** Observed a progressive performance improvement as optimizations were applied:
     - **Naive GPU:** Suffers from high overhead due to numerous atomic operations directly to global memory.
     - **Privatized GPU:**  Significant improvement by reducing global atomic operations, but still uses global memory for private histograms.
-    - **Privatized GPU with Shared Memory:**  Achieves the best performance by using shared memory for private histogram accumulation, thus minimizing global memory access and atomic operations, resulting in a substantial speedup.
+    - **Privatized GPU with Shared Memory:**  Achieves the best performance by using shared memory for private histogram accumulation, thus minimizing global memory access and atomic operations, resulting in a substantial speedup. But, still not faster than CPU.
 
 **Shared Memory Optimized Histogram Kernel:**
 ```c
@@ -50,7 +50,14 @@ __global__ void histPvtSharedGPU(unsigned int *data, unsigned int *hist)
 ```
 
 **Results:**
-- **CPU execution time:** 0.1010 ms
-- **GPU execution time:** 5.6891 ms
-- **GPU execution time with privatization of input:** 0.7117 ms
-- **GPU execution time with privatization of input in shared memory:** 0.0658 ms
+- **CPU execution time:** 0.1090 ms
+- **GPU execution time:** 5.7651 ms
+- **GPU execution time with privatization of input:** 0.7229 ms
+- **GPU execution time with privatization of input in shared memory:** 0.1362 ms
+
+**Histogram:**
+- Bin 0 has 6458 numbers
+- Bin 1 has 6514 numbers
+- Bin 2 has 6513 numbers
+- Bin 3 has 6557 numbers
+- Bin 4 has 6726 numbers

@@ -9,8 +9,6 @@
 #define BINS 5
 #define TOTAL_BINS (BLOCKS * BINS)
 
-#define COARSE
-
 void init(unsigned int *data)
 {
     srand(time(NULL));
@@ -73,7 +71,7 @@ __global__ void histPvtSharedGPU(unsigned int *data, unsigned int *hist)
 {
     unsigned int t_i = blockIdx.x * blockDim.x + threadIdx.x;
 
-    __shared__ unsigned int hist_s[TOTAL_BINS];
+    __shared__ unsigned int hist_s[BINS];
     for(unsigned bin = threadIdx.x; bin < BINS; bin += blockDim.x)
     {
         hist_s[bin] = 0u;
@@ -84,7 +82,7 @@ __global__ void histPvtSharedGPU(unsigned int *data, unsigned int *hist)
     {
         if(data[t_i] > 0 && data[t_i] <= 100)
         {
-            atomicAdd(&hist_s[(blockIdx.x * BINS + (data[t_i] - 1)/20)], 1);
+            atomicAdd(&hist_s[(data[t_i] - 1)/20], 1);
         }
     }
     __syncthreads();
@@ -104,7 +102,7 @@ __global__ void verify(unsigned int *hist_cpu, unsigned int *hist_gpu, unsigned 
 
     if (t_i < BINS)
     {
-        if (hist_cpu[t_i] != hist_gpu[t_i] && hist_gpu[t_i] != hist_gpu_pvt[t_i] && hist_gpu_pvt[t_i] != hist_gpu_pvt_shared[t_i])
+        if (hist_cpu[t_i] != hist_gpu[t_i] || hist_gpu[t_i] != hist_gpu_pvt[t_i] || hist_gpu_pvt[t_i] != hist_gpu_pvt_shared[t_i])
         {
             atomicAdd(errors, 1);
         }
@@ -118,15 +116,15 @@ int main()
     size_t size = N * sizeof(unsigned int);
 
     cudaMallocManaged(&data, size);
-    cudaMallocManaged(&hist_cpu, TOTAL_BINS * sizeof(unsigned int));
-    cudaMallocManaged(&hist_gpu, TOTAL_BINS * sizeof(unsigned int));
+    cudaMallocManaged(&hist_cpu, BINS * sizeof(unsigned int));
+    cudaMallocManaged(&hist_gpu, BINS * sizeof(unsigned int));
     cudaMallocManaged(&hist_gpu_pvt, TOTAL_BINS * sizeof(unsigned int));
-    cudaMallocManaged(&hist_gpu_pvt_shared, TOTAL_BINS * sizeof(unsigned int));
+    cudaMallocManaged(&hist_gpu_pvt_shared, BINS * sizeof(unsigned int));
 
-    cudaMemset(hist_cpu, 0, TOTAL_BINS * sizeof(unsigned int));
-    cudaMemset(hist_gpu, 0, TOTAL_BINS * sizeof(unsigned int));
+    cudaMemset(hist_cpu, 0, BINS * sizeof(unsigned int));
+    cudaMemset(hist_gpu, 0, BINS * sizeof(unsigned int));
     cudaMemset(hist_gpu_pvt, 0, TOTAL_BINS * sizeof(unsigned int));
-    cudaMemset(hist_gpu_pvt_shared, 0, TOTAL_BINS * sizeof(unsigned int));
+    cudaMemset(hist_gpu_pvt_shared, 0, BINS * sizeof(unsigned int));
 
     init(data);
 
