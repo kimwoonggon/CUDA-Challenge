@@ -1,4 +1,4 @@
-# Day 16: Revisiting Array Summation - Optimization with Shared Memory and Thread Coarsening, RTX A4000 Limit Testing
+# Day 16: Revisiting Day 5 - Optimization with Shared Memory and Thread Coarsening, RTX A4000 Limit Testing
 
 **Objective:**
 - **Re-optimize Array Summation for RTX A4000:** Revisit the array summation problem from Day 5 and apply advanced optimization techniques, specifically targeting the limits and capabilities of an NVIDIA RTX A4000 GPU. This includes shared memory and thread coarsening to maximize performance on this architecture.
@@ -15,10 +15,10 @@ This optimization effort is specifically tuned considering the limits of an NVID
 - **Max. Shared Memory per SM:** 96KB (usable)
 - **Max. Shared Memory per Block:** 48KB (when launching 1024 threads per block)
 
-Based on these limits, we aim to maximize shared memory usage and thread parallelism:
+Based on these limits, I aim to maximize shared memory usage and thread parallelism:
 - **Block Size (THREADS):** Set to 1024 to utilize maximum threads per block and blocks per SM.
 - **Shared Memory per Block:**  48KB can store approximately 12,000 integers (4 bytes each).
-- **Thread Coarsening Factor (ELEMENTS):** Calculated as `floor(12000 / 1024) ≈ 11`.  We use `ELEMENTS = 11` for thread coarsening, aiming for each thread to process 11 elements to maximize shared memory efficiency while keeping within hardware limits.
+- **Thread Coarsening Factor (ELEMENTS):** Calculated as `floor(12000 / 1024) ≈ 11`.  I used `ELEMENTS = 11` for thread coarsening, aiming for each thread to process 11 elements to maximize shared memory efficiency while keeping within hardware limits.
 
 **Key Learnings:**
 - **RTX A4000 Specific Optimization:** Gained experience in tailoring GPU kernels to the specific architecture and limitations of a target GPU (RTX A4000). This involves understanding SM counts, thread limits, and memory capacities to optimize kernel launch parameters and resource usage.
