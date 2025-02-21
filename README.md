@@ -37,3 +37,5 @@ Click on the links below to explore the details of each day's kernel to find a d
 -   **Day 14: Histogram Calculation Optimization with Privatization and Shared Memory** [(Click for details)](./day14)
 
 -   **Day 15: Thread Coarsening Strategies for Histogram Optimization and Scalability** [(Click for details)](./day15)
+
+-   **Day 16: Revisiting Array Summation - Optimization with Shared Memory and Thread Coarsening, RTX A4000 Limit Testing** [(Click for details)](./day16)
