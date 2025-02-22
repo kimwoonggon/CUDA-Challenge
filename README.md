@@ -41,3 +41,5 @@ Click on the links below to explore the details of each day's kernel to find a d
 -   **Day 16: Revisiting Day 5 - Optimization with Shared Memory and Thread Coarsening, RTX A4000 Limit Testing** [(Click for details)](./day16)
 
 -   **Day 17: Kogge-Stone Prefix Sum Algorithm - Shared Memory and Double Buffering Optimizations** [(Click for details)](./day17)
+
+-   **Day 18: Brent-Kung Prefix Sum Algorithm - Exploring Trade-offs in Parallel Prefix Sum** [(Click for details)](./day18)
