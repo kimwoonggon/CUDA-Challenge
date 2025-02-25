@@ -27,3 +27,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 17: Kogge-Stone Prefix Sum Algorithm - Shared Memory and Double Buffering Optimizations**](./day17)
 - [**Day 18: Brent-Kung Prefix Sum Algorithm - Exploring Trade-offs in Parallel Prefix Sum**](./day18)
 - [**Day 19: GPU Accelerated Merge Operation - Hybrid CPU/GPU Approach**](./day19)
+- [**Day 20: Tiled GPU Merge - Enhancing Performance with Shared Memory Tiling**](./day20)
