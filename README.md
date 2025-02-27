@@ -29,3 +29,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 19: GPU Accelerated Merge Operation - Hybrid CPU/GPU Approach**](./day19)
 - [**Day 20: Tiled GPU Merge - Enhancing Performance with Shared Memory Tiling**](./day20)
 - [**Day 21: Radix Sort - Bitwise Sorting with GPU Acceleration using Brent-Kung Scan**](./day21)
+- [**Day 22: Radix Sort Optimization - Shared Memory for Enhanced Bitwise Sorting**](./day22)
