@@ -27,9 +27,6 @@
 - **Dense Matrix Storage Size:** 64.00 MB
 - **Sparse Matrix Storage Size (COO):** 19.19 MB
 - **Sparse Matrix Storage Size (CSR):** 12.81 MB
-- **Dense Matrix Storage Size:** 64.00 MB
-- **Sparse Matrix Storage Size (COO):** 19.21 MB
-- **Sparse Matrix Storage Size (CSR):** 12.82 MB
 
 - **COO Creation Time:** 51.19 ms
 - **COO Operation Time:** 880.78 ms
