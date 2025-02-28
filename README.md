@@ -31,3 +31,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 21: Radix Sort - Bitwise Sorting with GPU Acceleration using Brent-Kung Scan**](./day21)
 - [**Day 22: Radix Sort Optimization - Shared Memory for Enhanced Bitwise Sorting**](./day22)
 - [**Day 23: Sparse Matrix Formats - COO and CSR for Efficient Storage**](./day23)
+- [**Day 24: Sparse Matrix-Vector Multiplication (SpMV) - COO vs. CSR Performance on GPU**](./day24)
