@@ -33,3 +33,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 23: Sparse Matrix Formats - COO and CSR for Efficient Storage**](./day23)
 - [**Day 24: Sparse Matrix-Vector Multiplication (SpMV) - COO vs. CSR Performance on GPU**](./day24)
 - [**Day 25: Data Type Performance - Benchmarking ReLU Activation with FP64, FP32, FP16, and INT8 on RTX A4000**](./day25)
+- [**Day 26: Precision Analysis of Activation Functions - FP64, FP32, FP16, and INT8 Performance**](./day26)
