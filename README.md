@@ -34,6 +34,7 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 24: Sparse Matrix-Vector Multiplication (SpMV) - COO vs. CSR Performance on GPU**](./day24)
 - [**Day 25: Data Type Performance - Benchmarking ReLU Activation with FP64, FP32, FP16, and INT8 on RTX A4000**](./day25)
 - [**Day 26: Precision Analysis of Activation Functions - FP64, FP32, FP16, and INT8 Performance**](./day26)
+<<<<<<< HEAD
 - [**Day 27: Exploring ELL and JDS Sparse Matrix Formats**](./day27)
 - [**Day 28: SpMV Performance with ELL Sparse Matrix Format**](./day28)
 - [**Day 29: Completion of SpMV Implementations and Comparative Analysis (COO, CSR, ELL, JDS)**](./day29)
@@ -46,3 +47,6 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 36: GPU-Accelerated Ray Tracing of an Animated Sphere with PyCUDA**](./day36)
 - [**Day 37: Extending the Ray Tracer: Multiple Objects, Shading, and Shadows**](./day37)
 - [**Day 38: Implementing Basic Physics in a GPU Ray Tracer**](./day38)
+=======
+- [**Day 27: Exploring ELL and JDS Sparse Matrix Formats**](./day27)
+>>>>>>> d7408d1 (Day27 updates)

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Day 27: Exploring ELL and JDS Sparse Matrix Formats in CUDA
+=======
+# Day 27: Exploring ELL and JDS Sparse Matrix Formats
+>>>>>>> d7408d1 (Day27 updates)
 
 **Objective:**
 - **Implement ELL and JDS Format Conversion:**  Implement CUDA-based functions to convert a dense sparse matrix into Ellpack (ELL) and Jagged Diagonal Storage (JDS) formats.
@@ -33,14 +37,23 @@
     - Iterates through the dense matrix, and for each row, stores the non-zero values and their column indices in the `ellVal` and `ellCol` arrays respectively, padding with zeros and -1 for column indices when a row has fewer than `max_nnz` non-zero elements.
 - **JDS Conversion (`JDS` function):**
     - Implements the conversion to JDS format on the CPU.
+<<<<<<< HEAD
     - **Row Permutation:** First, it calculates `row_nnz` for each row and then permutes the rows in descending order of `row_nnz`. The `jdsPerm` array stores this permutation.
     - **Jagged Diagonal Construction:**  Determines `jds_max_nnz` (which is the same as `max_nnz` after permutation, i.e., the non-zero count of the densest row).
+=======
+    - Row Permutation: First, it calculates `row_nnz` for each row and then permutes the rows in descending order of `row_nnz`. The `jdsPerm` array stores this permutation.
+    - Jagged Diagonal Construction:  Determines `jds_max_nnz` (which is the same as `max_nnz` after permutation, i.e., the non-zero count of the densest row).
+>>>>>>> d7408d1 (Day27 updates)
     - Allocates memory for `jdsRow`, `jdsCol`, `jdsVal`, and `jdsPerm`.
     - Populates the `jdsRow` array which acts as pointers to the start of each jagged diagonal. `jdsRow[d]` points to the index in `jdsVal` and `jdsCol` where the d-th jagged diagonal begins.
     - Extracts non-zero values and column indices into `jdsVal` and `jdsCol` in a jagged diagonal order, respecting the row permutation.
 
 **Results (Storage Size Comparison for N=2^12, SPARSITY=0.1):**
+<<<<<<< HEAD
 - **Dense Matrix Storage Size: 64.00 MB
+=======
+- **Dense Matrix Storage Size:** 64.00 MB
+>>>>>>> d7408d1 (Day27 updates)
 - **Sparse Matrix Storage Size (COO):** 19.20 MB
 - **Sparse Matrix Storage Size (CSR):** 12.82 MB
 - **Sparse Matrix Storage Size (ELL):** 15.09 MB
