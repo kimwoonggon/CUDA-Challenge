@@ -35,3 +35,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 25: Data Type Performance - Benchmarking ReLU Activation with FP64, FP32, FP16, and INT8 on RTX A4000**](./day25)
 - [**Day 26: Precision Analysis of Activation Functions - FP64, FP32, FP16, and INT8 Performance**](./day26)
 - [**Day 27: Exploring ELL and JDS Sparse Matrix Formats**](./day27)
+- [**Day 28: SpMV Performance with ELL Sparse Matrix Format**](./day28)
