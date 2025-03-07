@@ -36,3 +36,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 26: Precision Analysis of Activation Functions - FP64, FP32, FP16, and INT8 Performance**](./day26)
 - [**Day 27: Exploring ELL and JDS Sparse Matrix Formats**](./day27)
 - [**Day 28: SpMV Performance with ELL Sparse Matrix Format**](./day28)
+- [**Day 29: Completion of SpMV Implementations and Comparative Analysis (COO, CSR, ELL, JDS)**](./day29)

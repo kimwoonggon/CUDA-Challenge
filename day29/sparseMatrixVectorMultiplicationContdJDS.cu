@@ -55,8 +55,7 @@ void COO(int *sparse_m, int **cooRow, int **cooCol, int **cooVal, int64_t *non_z
     cudaMallocManaged(cooVal, (*non_zero) * sizeof(int));
 
     cusparseSpMatDescr_t matCOO;
-    cusparseCreateCoo(&matCOO, N, N, *non_zero, *cooRow, *cooCol, *cooVal,
-                        CUSPARSE_INDEX_32I, CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32I);
+    cusparseCreateCoo(&matCOO, N, N, *non_zero, *cooRow, *cooCol, *cooVal, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32I);
 
     size_t bufferSize = 0;
     void *dBuffer = NULL;
@@ -93,8 +92,7 @@ void CSR(int *sparse_m, int **csrRowPtr, int **csrCol, int **csrVal, int64_t *no
     cudaMallocManaged(csrVal, (*non_zero) * sizeof(int));
 
     cusparseSpMatDescr_t matCSR;
-    cusparseCreateCsr(&matCSR, N, N, *non_zero, *csrRowPtr, *csrCol, *csrVal,
-                      CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32I);
+    cusparseCreateCsr(&matCSR, N, N, *non_zero, *csrRowPtr, *csrCol, *csrVal, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I, CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32I);
 
     size_t bufferSize = 0;
     void *dBuffer = NULL;
@@ -310,6 +308,24 @@ __global__ void spMV_ELL(int *ellCol, int *ellVal, int *in_vect, int *out_vect, 
     }
 }
 
+__global__ void spMV_JDS(int *jdsRow, int *jdsCol, int *jdsVal, int *jdsPerm, int *in_vect, int *out_vect, int non_zero_jds, int jds_max_nnz)
+{
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if(tid < non_zero_jds) 
+    {
+        int d;
+        for(d = 0; d < jds_max_nnz; d++){
+        if(tid < jdsRow[d+1])
+        break;
+        }
+        int offset = tid - jdsRow[d];
+        int row = jdsPerm[offset]; 
+        int col = jdsCol[tid];
+        int val = jdsVal[tid];
+        atomicAdd(&out_vect[row], val * in_vect[col]);
+    }
+}
+
 void spMV_CPU(int *sparse_m, int *in_vect, int *out_vect)
 {
     for (int row = 0; row < N; row++) 
@@ -329,15 +345,17 @@ int main()
     cudaMallocManaged(&sparse_m, N * N * sizeof(int));
     cudaMallocManaged(&in_vect, N * sizeof(int));
 
-    int *out_vect_coo, *out_vect_csr, *out_vect_ell, *out_vect_cpu;
+    int *out_vect_coo, *out_vect_csr, *out_vect_ell, *out_vect_jds, *out_vect_cpu;
     cudaMallocManaged(&out_vect_coo, N * sizeof(int));
     cudaMallocManaged(&out_vect_csr, N * sizeof(int));
     cudaMallocManaged(&out_vect_ell, N * sizeof(int));
+    cudaMallocManaged(&out_vect_jds, N * sizeof(int));
     cudaMallocManaged(&out_vect_cpu, N * sizeof(int));
     
     cudaMemset(out_vect_coo, 0, N * sizeof(int));
     cudaMemset(out_vect_csr, 0, N * sizeof(int));
     cudaMemset(out_vect_ell, 0, N * sizeof(int));
+    cudaMemset(out_vect_jds, 0, N * sizeof(int));
     cudaMemset(out_vect_cpu, 0, N * sizeof(int));
 
     init<<<BLOCKS, THREADS>>>(sparse_m, time(NULL));
@@ -416,10 +434,24 @@ int main()
     JDS(sparse_m, &jdsRow, &jdsCol, &jdsVal, &jdsPerm, &non_zero_jds, &jds_max_nnz);
     clock_t end_jds_creation = clock();
     double jds_creation_time = ((double)(end_jds_creation - start_jds_creation)) / CLOCKS_PER_SEC * 1000.0;
+
+    cudaEvent_t start4, stop4;
+    float jds_operation_time;
+    cudaEventCreate(&start4);
+    cudaEventCreate(&stop4);
+    cudaEventRecord(start4);
+    spMV_JDS<<<((non_zero_jds + THREADS - 1) / THREADS), THREADS>>>(jdsRow, jdsCol, jdsVal, jdsPerm, in_vect, out_vect_jds, non_zero_jds, jds_max_nnz);
+    cudaDeviceSynchronize();
+    cudaEventRecord(stop4);
+    cudaEventSynchronize(stop4);
+    cudaEventElapsedTime(&jds_operation_time, start4, stop4);
+    cudaEventDestroy(start4);
+    cudaEventDestroy(stop4);
     
     double coo_total_time = coo_creation_time + coo_operation_time;
     double csr_total_time = csr_creation_time + csr_operation_time;
     double ell_total_time = ell_creation_time + ell_operation_time;
+    double jds_total_time = jds_creation_time + jds_operation_time;
 
     printf("Dense Matrix Storage Size: %.2lf MB\n", (N * N * sizeof(int) / (1024.0 * 1024)));
     printf("Sparse Matrix Storage Size (COO): %.2lf MB\n", ((non_zero_coo * 3 * sizeof(int)) / (1024.0 * 1024)));
@@ -438,6 +470,10 @@ int main()
     printf("ELL Creation Time: %f ms\n", ell_creation_time);
     printf("ELL Operation Time: %f ms\n", ell_operation_time);
     printf("ELL Total Time: %f ms\n\n", ell_total_time);
+
+    printf("JDS Creation Time: %f ms\n", jds_creation_time);
+    printf("JDS Operation Time: %f ms\n", jds_operation_time);
+    printf("JDS Total Time: %f ms\n\n", jds_total_time);
     
     printf("CPU spMV Time: %f ms\n\n", cpu_time);
     
@@ -446,6 +482,7 @@ int main()
     cudaFree(out_vect_coo);
     cudaFree(out_vect_csr);
     cudaFree(out_vect_ell);
+    cudaFree(out_vect_jds);
     cudaFree(out_vect_cpu);
     cudaFree(cooRow);
     cudaFree(cooCol);
