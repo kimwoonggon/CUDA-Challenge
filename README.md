@@ -38,3 +38,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 28: SpMV Performance with ELL Sparse Matrix Format**](./day28)
 - [**Day 29: Completion of SpMV Implementations and Comparative Analysis (COO, CSR, ELL, JDS)**](./day29)
 - [**Day 30: Achieving Peak 2D Convolution Performance: Custom CUDA Kernel vs. cuDNN**](./day30)
+- [**Day 31: Implementing 2D Max Pooling in CUDA**](./day31)
