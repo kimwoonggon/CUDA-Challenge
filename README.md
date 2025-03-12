@@ -41,3 +41,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 31: Implementing 2D Max Pooling in CUDA**](./day31)
 - [**Day 32: Introduction to Triton: Vector Addition**](./day32)
 - [**Day 33: Matrix Multiplication with Triton**](./day33)
+- [**Day 34: Image Rendering on the GPU: A Gradient Example**](./day34)
