@@ -42,3 +42,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 32: Introduction to Triton: Vector Addition**](./day32)
 - [**Day 33: Matrix Multiplication with Triton**](./day33)
 - [**Day 34: Image Rendering on the GPU: A Gradient Example**](./day34)
+- [**Day 35: GPU-Accelerated Animation with PyCUDA**](./day35)
