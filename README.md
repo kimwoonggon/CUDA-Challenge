@@ -43,3 +43,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 33: Matrix Multiplication with Triton**](./day33)
 - [**Day 34: Image Rendering on the GPU: A Gradient Example**](./day34)
 - [**Day 35: GPU-Accelerated Animation with PyCUDA**](./day35)
+- [**Day 36: GPU-Accelerated Ray Tracing of an Animated Sphere with PyCUDA**](./day36)
