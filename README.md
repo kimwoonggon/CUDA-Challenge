@@ -45,3 +45,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 35: GPU-Accelerated Animation with PyCUDA**](./day35)
 - [**Day 36: GPU-Accelerated Ray Tracing of an Animated Sphere with PyCUDA**](./day36)
 - [**Day 37: Extending the Ray Tracer: Multiple Objects, Shading, and Shadows**](./day37)
+- [**Day 38: Implementing Basic Physics in a GPU Ray Tracer**](./day38)
