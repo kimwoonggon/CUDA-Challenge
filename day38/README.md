@@ -36,6 +36,6 @@
     - **Ray Tracing with Updated Positions:** The ray tracing part of the `render` kernel uses the updated positions of the spheres (after the physics simulation) to perform the intersection tests and render the scene.
 
 **Output:**
-- Running the Python script associated with this CUDA kernel will generate an animation of three spheres undergoing a basic physics simulation. You will observe the spheres falling due to gravity, bouncing off the floor, colliding with each other and bouncing apart, and being constrained within the scene boundaries. The animation, saved as `day38_physics.gif` in the same directory as this README, showcases these dynamic interactions with the previously implemented ray tracing rendering, including shading and shadows.
+- Running the Python script associated with this CUDA kernel will generate an animation of three spheres undergoing a basic physics simulation. You will observe the spheres falling due to gravity, bouncing off the floor, colliding with each other and bouncing apart, and being constrained within the scene boundaries. The animation, saved as `collision.gif` in the same directory as this README, showcases these dynamic interactions with the previously implemented ray tracing rendering, including shading and shadows.
 
 <img src="collision.gif">
