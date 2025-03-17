@@ -57,14 +57,25 @@
 
 **Output:**
 Jacobi relaxation Calculation: 8192 x 8192 mesh
+
 Iteration:- 0, Error:- 0.250000
+
 Iteration:- 100, Error:- 0.002397
+
 Iteration:- 200, Error:- 0.001204
+
 Iteration:- 300, Error:- 0.000804
+
 Iteration:- 400, Error:- 0.000603
+
 Iteration:- 500, Error:- 0.000483
+
 Iteration:- 600, Error:- 0.000403
+
 Iteration:- 700, Error:- 0.000345
+
 Iteration:- 800, Error:- 0.000302
+
 Iteration:- 900, Error:- 0.000269
+
 total: 153.786118 s
