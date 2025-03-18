@@ -47,3 +47,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 37: Extending the Ray Tracer: Multiple Objects, Shading, and Shadows**](./day37)
 - [**Day 38: Implementing Basic Physics in a GPU Ray Tracer**](./day38)
 - [**Day 39: Jacobi Relaxation Calculation**](./day39)
+- [**Day 40: N-Body Simulation**](./day40)
