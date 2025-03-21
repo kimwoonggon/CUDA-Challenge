@@ -48,3 +48,5 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 38: Implementing Basic Physics in a GPU Ray Tracer**](./day38)
 - [**Day 39: Jacobi Relaxation Calculation**](./day39)
 - [**Day 40: N-Body Simulation**](./day40)
+- [**Day 41: 2D Image Upsampling**](./day41)
+- [**Day 42: Exploring Warp-Level Synchronization in a GPU Monte Carlo Simulation**](./day42)
