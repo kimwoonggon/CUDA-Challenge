@@ -52,3 +52,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 42: Exploring Warp-Level Synchronization in a GPU Monte Carlo Simulation**](./day42)
 - [**Day 43: 2D Wave Equation Simulation**](./day43)
 - [**Day 44: Achieving High-Performance Matrix Multiplication: Custom CUDA Tiling vs. cuBLAS**](./day44)
+- [**Day 45: Batched Matrix Multiplication on the GPU with cuBLAS**](./day45)
