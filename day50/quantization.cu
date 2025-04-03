@@ -72,29 +72,35 @@ int main()
     cudaEvent_t start, stop;
     float time_fp64 = 0, time_fp32 = 0, time_fp16 = 0;
 
-    cudaEventCreate(&start); cudaEventCreate(&stop);
+    cudaEventCreate(&start); 
+    cudaEventCreate(&stop);
     cudaEventRecord(start);
     fp64<<<blocks, threads>>>(d_fp64, d_out64, scale);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time_fp64, start, stop);
-    cudaEventDestroy(start); cudaEventDestroy(stop);
+    cudaEventDestroy(start); 
+    cudaEventDestroy(stop);
 
-    cudaEventCreate(&start); cudaEventCreate(&stop);
+    cudaEventCreate(&start); 
+    cudaEventCreate(&stop);
     cudaEventRecord(start);
     fp32<<<blocks, threads>>>(d_fp32, d_out32, scale);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time_fp32, start, stop);
-    cudaEventDestroy(start); cudaEventDestroy(stop);
+    cudaEventDestroy(start); 
+    cudaEventDestroy(stop);
 
-    cudaEventCreate(&start); cudaEventCreate(&stop);
+    cudaEventCreate(&start); 
+    cudaEventCreate(&stop);
     cudaEventRecord(start);
     fp16<<<blocks, threads>>>(d_fp16, d_out16, scale);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&time_fp16, start, stop);
-    cudaEventDestroy(start); cudaEventDestroy(stop);
+    cudaEventDestroy(start); 
+    cudaEventDestroy(stop);
 
     printf("FP64 -> int8: %.3f ms\n", time_fp64);
     printf("FP32 -> int8: %.3f ms\n", time_fp32);
