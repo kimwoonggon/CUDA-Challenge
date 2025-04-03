@@ -55,3 +55,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 45: Batched Matrix Multiplication on the GPU with cuBLAS**](./day45)
 - [**Day 46: 3D Finite-Difference Time-Domain (FDTD) Simulation**](./day46)
 - [**Day 47: Rotary Position Embedding**](./day47)
+- [**Day 48: Layer Normalization**](./day48)
