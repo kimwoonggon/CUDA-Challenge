@@ -57,3 +57,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 47: Rotary Position Embedding**](./day47)
 - [**Day 48: Layer Normalization**](./day48)
 - [**Day 49: Softmax Activation Function**](./day49)
+- [**Day 50: Quantization of Floating-Point Numbers to int8**](./day50)
