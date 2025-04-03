@@ -56,3 +56,4 @@ Click on the links below to explore the details of each day's kernel to find a d
 - [**Day 46: 3D Finite-Difference Time-Domain (FDTD) Simulation**](./day46)
 - [**Day 47: Rotary Position Embedding**](./day47)
 - [**Day 48: Layer Normalization**](./day48)
+- [**Day 49: Softmax Activation Function**](./day49)
