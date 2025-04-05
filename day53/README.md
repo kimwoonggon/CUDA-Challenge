@@ -55,11 +55,6 @@
     - Prints the execution times for both the custom implementation and the cuBLASLt function.
     - Frees all allocated memory.
 
-**Output Analysis:**
-
-The output shows a significant performance difference between the custom tiled and fused quantized implementation and the cuBLASLt INT8 GEMM function:
-
-
 **Results (N = 1024)**
 - **Fused Tiled (int8→fp16):** 32.19 ms
 - **cuBLASLt INT8 GEMM:** 1.11 ms
