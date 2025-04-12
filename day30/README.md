@@ -1,3 +1,26 @@
+### How to start  
+find /home/kimwoonggon/anaconda3/envs/llamacpp -name "cudnn.h"  
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/include/cudnn.h  
+nvcc -arch=sm_75 -I/path/to/cudnn/include cuDNNConv2D.cu -o cuDNNConv2D  
+
+nvcc -arch=sm_75 -I/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/include -L/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib -lcudnn.9 cuDNNConv2D.cu -o cuDNNConv2D  
+
+cd /home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib  
+** ln -s libcudnn.so.9 libcudnn.so **  
+** nvcc -arch=sm_75 -I/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/include -L/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib -lcudnn cuDNNConv2D.cu -o cuDNNConv2D -Xlinker -rpath=/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib
+**  
+
+
+find /home/kimwoonggon/anaconda3/envs/llamacpp -name "libcudnn*.so*"
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_heuristic.so.9
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_runtime_compiled.so.9
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_cnn.so.9
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_adv.so.9
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_precompiled.so.9
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn.so.9
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_graph.so.9
+/home/kimwoonggon/anaconda3/envs/llamacpp/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_ops.so.9
+
 # Day 30: Achieving Peak 2D Convolution Performance: Custom CUDA Kernel vs. cuDNN
 
 **Objective:**
